@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>LegalEase AI — Understand Any Contract, Instantly</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #111210;
+    --paper: #f7f5f0;
+    --surface: #ffffff;
+    --cream: #edeae2;
+    --teal: #0f6e56;
+    --teal-bg: #e1f5ee;
+    --teal-mid: #1d9e75;
+    --muted: #6b6860;
+    --border: rgba(17, 18, 16, 0.1);
+    --gold: #b8860b;
+    --warn-bg: #faeeda;
+    --warn-text: #633806;
+    --danger-bg: #fcebeb;
+    --danger-text: #791f1f;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.6; font-weight: 400; }
+
+  /* ── NAVBAR ── */
+  .navbar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(247, 245, 240, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2.5rem; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-brand {
+    font-family: 'Lora', serif; font-weight: 700; font-size: 1.2rem;
+    color: var(--ink); display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
+  }
+  .nav-brand svg { width: 20px; height: 20px; fill: none; stroke: var(--teal); stroke-width: 2; }
+  .nav-links { display: flex; align-items: center; gap: 2rem; }
+  .nav-links a { font-size: 0.875rem; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-btn {
+    background: var(--ink); color: #fff; border: none;
+    padding: 9px 20px; border-radius: 8px;
+    font-size: 0.875rem; font-weight: 500; cursor: pointer;
+    font-family: 'Inter', sans-serif; transition: background 0.15s;
+  }
+  .nav-btn:hover { background: var(--teal); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 6rem 2.5rem 5rem;
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 5rem; align-items: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--teal-bg); color: var(--teal);
+    font-size: 0.75rem; font-weight: 500;
+    padding: 5px 14px; border-radius: 100px;
+    margin-bottom: 1.5rem; letter-spacing: 0.03em;
+  }
+  .badge-dot { width: 6px; height: 6px; background: var(--teal-mid); border-radius: 50%; flex-shrink: 0; }
+  .hero h1 {
+    font-family: 'Lora', serif;
+    font-size: clamp(2.2rem, 3.5vw, 3rem);
+    font-weight: 700; line-height: 1.12;
+    letter-spacing: -0.025em; margin-bottom: 1.25rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--teal); }
+  .hero-sub {
+    font-size: 1.05rem; color: var(--muted); line-height: 1.75;
+    margin-bottom: 2rem; font-weight: 300; max-width: 480px;
+  }
+  .hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--ink); color: #fff; border: none;
+    padding: 12px 24px; border-radius: 8px;
+    font-size: 0.95rem; font-weight: 500; cursor: pointer;
+    transition: background 0.15s; font-family: 'Inter', sans-serif;
+  }
+  .btn-primary:hover { background: var(--teal); }
+  .btn-secondary {
+    background: transparent; color: var(--ink);
+    border: 1px solid var(--border);
+    padding: 12px 24px; border-radius: 8px;
+    font-size: 0.95rem; font-weight: 400; cursor: pointer;
+    transition: all 0.15s; font-family: 'Inter', sans-serif;
+  }
+  .btn-secondary:hover { background: var(--cream); }
+  .hero-trust { display: flex; align-items: center; gap: 1.25rem; margin-top: 1.75rem; flex-wrap: wrap; }
+  .trust-item { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--muted); }
+  .trust-check {
+    width: 16px; height: 16px; background: var(--teal-bg);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .trust-check svg { width: 8px; height: 8px; fill: none; stroke: var(--teal); stroke-width: 2.5; }
+
+  /* ── DEMO CARD ── */
+  .doc-demo {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+    box-shadow: 0 4px 24px rgba(17,18,16,0.07);
+  }
+  .demo-topbar {
+    background: var(--cream); border-bottom: 1px solid var(--border);
+    padding: 11px 16px; display: flex; align-items: center; gap: 6px;
+  }
+  .dtb-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .dtb-r { background: #ff6059; }
+  .dtb-y { background: #ffbe2e; }
+  .dtb-g { background: #27c840; }
+  .demo-file { font-size: 0.75rem; color: var(--muted); margin-left: auto; }
+  .demo-cols { display: grid; grid-template-columns: 1fr 1fr; }
+  .demo-col { padding: 1.4rem; }
+  .demo-col:first-child { border-right: 1px solid var(--border); }
+  .demo-label {
+    font-size: 0.68rem; letter-spacing: 0.09em; font-weight: 500;
+    color: var(--muted); text-transform: uppercase; margin-bottom: 0.65rem;
+  }
+  .legal-text { font-size: 0.76rem; color: #aaa; line-height: 1.75; }
+  .legal-text mark { background: rgba(184,134,11,0.18); color: inherit; padding: 1px 3px; border-radius: 2px; }
+  .plain-text { font-size: 0.8rem; color: var(--ink); line-height: 1.7; }
+  .risk-tag {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--warn-bg); color: var(--warn-text);
+    font-size: 0.68rem; font-weight: 500;
+    padding: 3px 9px; border-radius: 100px; margin-bottom: 0.6rem;
+  }
+  .risk-dot { width: 7px; height: 7px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+  .risk-tag-danger {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--danger-bg); color: var(--danger-text);
+    font-size: 0.68rem; font-weight: 500;
+    padding: 3px 9px; border-radius: 100px; margin-bottom: 0.6rem; margin-left: 4px;
+  }
+  .risk-dot-danger { width: 7px; height: 7px; background: #e24b4a; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── STATS BAR ── */
+  .stats-bar { background: var(--ink); padding: 3rem 2.5rem; }
+  .stats-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1rem; text-align: center;
+  }
+  .stat-item {}
+  .stat-num { font-family: 'Lora', serif; font-size: 2.2rem; font-weight: 700; color: #fff; line-height: 1; }
+  .stat-lbl { font-size: 0.82rem; color: rgba(255,255,255,0.45); margin-top: 5px; font-weight: 300; }
+
+  /* ── SECTIONS ── */
+  .section { padding: 5.5rem 2.5rem; max-width: 1200px; margin: 0 auto; }
+  .section-tag {
+    font-size: 0.72rem; letter-spacing: 0.1em; font-weight: 500;
+    color: var(--teal); text-transform: uppercase; margin-bottom: 0.6rem;
+  }
+  .section-h {
+    font-family: 'Lora', serif; font-size: clamp(1.75rem, 2.8vw, 2.4rem);
+    font-weight: 700; letter-spacing: -0.02em; line-height: 1.18;
+    max-width: 560px;
+  }
+  .section-sub {
+    font-size: 1rem; color: var(--muted); line-height: 1.7;
+    max-width: 500px; margin-top: 0.75rem; font-weight: 300;
+  }
+
+  /* ── FEATURES GRID ── */
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem; margin-top: 2.75rem;
+  }
+  .feat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.6rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .feat-card:hover {
+    border-color: rgba(17,18,16,0.22);
+    box-shadow: 0 4px 20px rgba(17,18,16,0.06);
+  }
+  .feat-icon {
+    width: 38px; height: 38px; background: var(--teal-bg);
+    border-radius: 9px; display: flex; align-items: center;
+    justify-content: center; margin-bottom: 1rem;
+  }
+  .feat-icon svg { width: 17px; height: 17px; fill: none; stroke: var(--teal); stroke-width: 2; }
+  .feat-card h3 { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.45rem; }
+  .feat-card p { font-size: 0.83rem; color: var(--muted); line-height: 1.65; font-weight: 300; }
+
+  /* ── HOW IT WORKS ── */
+  .how-section { background: var(--ink); padding: 5.5rem 2.5rem; }
+  .how-inner { max-width: 1200px; margin: 0 auto; }
+  .how-section .section-tag { color: #5dcaa5; }
+  .how-section .section-h { color: #fff; max-width: 100%; }
+  .steps-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    margin-top: 2.75rem; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; overflow: hidden;
+  }
+  .step-item {
+    padding: 2.25rem; border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  .step-item:last-child { border-right: none; }
+  .step-n {
+    font-family: 'Lora', serif; font-size: 3.5rem; font-weight: 700;
+    color: rgba(255,255,255,0.05); line-height: 1; margin-bottom: 0.5rem;
+  }
+  .step-pill {
+    display: inline-flex; align-items: center;
+    background: rgba(93,202,165,0.12); color: #5dcaa5;
+    font-size: 0.72rem; font-weight: 500;
+    padding: 3px 11px; border-radius: 100px; margin-bottom: 0.8rem;
+  }
+  .step-item h3 { font-size: 1rem; font-weight: 500; color: #fff; margin-bottom: 0.5rem; }
+  .step-item p { font-size: 0.83rem; color: rgba(255,255,255,0.42); line-height: 1.65; font-weight: 300; }
+
+  /* ── DOCUMENT TYPES ── */
+  .doc-types-section { background: var(--cream); padding: 5rem 2.5rem; }
+  .doc-types-inner { max-width: 1200px; margin: 0 auto; }
+  .types-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem; margin-top: 2.25rem;
+  }
+  .type-chip {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.9rem 1rem;
+    font-size: 0.83rem; font-weight: 400; color: var(--ink);
+    text-align: center; transition: all 0.15s; cursor: default;
+  }
+  .type-chip:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* ── UPLOAD SECTION ── */
+  .upload-section { padding: 5.5rem 2.5rem; max-width: 820px; margin: 0 auto; text-align: center; }
+  .upload-area {
+    border: 1.5px dashed var(--border); border-radius: 14px;
+    padding: 3.5rem 2rem; margin-top: 2.5rem;
+    cursor: pointer; transition: all 0.2s; background: var(--surface);
+  }
+  .upload-area:hover { border-color: var(--teal-mid); background: var(--teal-bg); }
+  .upload-icon-box {
+    width: 52px; height: 52px; background: var(--cream);
+    border-radius: 12px; display: flex; align-items: center;
+    justify-content: center; margin: 0 auto 1.25rem;
+  }
+  .upload-icon-box svg { width: 22px; height: 22px; fill: none; stroke: var(--muted); stroke-width: 1.5; }
+  .upload-area p { font-size: 0.9rem; color: var(--muted); line-height: 1.65; }
+  .upload-area strong { color: var(--teal); font-weight: 500; }
+  .upload-meta { font-size: 0.76rem; color: var(--muted); margin-top: 0.45rem; }
+  .upload-formats { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.25rem; flex-wrap: wrap; }
+  .fmt-tag {
+    background: var(--cream); color: var(--muted);
+    font-size: 0.72rem; padding: 3px 10px; border-radius: 100px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── CTA ── */
+  .cta-section { background: var(--teal); padding: 6rem 2.5rem; text-align: center; }
+  .cta-section h2 {
+    font-family: 'Lora', serif;
+    font-size: clamp(1.75rem, 3vw, 2.4rem);
+    font-weight: 700; color: #fff; margin-bottom: 0.85rem;
+  }
+  .cta-section p { color: rgba(255,255,255,0.68); max-width: 460px; margin: 0 auto 2.25rem; font-weight: 300; font-size: 1rem; line-height: 1.7; }
+  .btn-white {
+    background: #fff; color: var(--teal); border: none;
+    padding: 13px 28px; border-radius: 8px;
+    font-size: 1rem; font-weight: 500; cursor: pointer;
+    transition: all 0.15s; font-family: 'Inter', sans-serif;
+  }
+  .btn-white:hover { background: var(--paper); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink); padding: 2.25rem 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-brand { font-family: 'Lora', serif; color: #fff; font-weight: 700; font-size: 1.05rem; }
+  .footer-links { display: flex; gap: 1.75rem; }
+  .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.35); text-decoration: none; transition: color 0.15s; }
+  .footer-links a:hover { color: rgba(255,255,255,0.7); }
+  .footer-copy { font-size: 0.75rem; color: rgba(255,255,255,0.22); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 3rem; padding: 4rem 1.5rem 3rem; }
+    .hero h1 { font-size: 2.2rem; }
+    .features-grid { grid-template-columns: repeat(2, 1fr); }
+    .stats-inner { grid-template-columns: repeat(2, 1fr); }
+    .steps-grid { grid-template-columns: 1fr; }
+    .step-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .step-item:last-child { border-bottom: none; }
+    .navbar { padding: 0 1.5rem; }
+    .nav-links a { display: none; }
+  }
+  @media (max-width: 600px) {
+    .features-grid { grid-template-columns: 1fr; }
+    .stats-inner { grid-template-columns: 1fr 1fr; }
+    .demo-cols { grid-template-columns: 1fr; }
+    .demo-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+    .hero-trust { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="nav-brand" href="#">
+    <svg viewBox="0 0 24 24"><path d="M12 3L4 8v4c0 5 3.5 9.74 8 11 4.5-1.26 8-6 8-11V8z"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+    LegalEase AI
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#docs">Documents</a>
+    <a href="#pricing">Pricing</a>
+    <button class="nav-btn">Get started free</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-badge"><span class="badge-dot"></span> AI-powered legal clarity</div>
+    <h1>Understand any contract,<br><em>instantly.</em></h1>
+    <p class="hero-sub">LegalEase AI converts complex legal documents into plain English. Upload any contract, NDA, lease, or policy — and get a clear, clause-by-clause explanation in seconds.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('upload').scrollIntoView({behavior:'smooth'})">Analyze a document</button>
+      <button class="btn-secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See how it works</button>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item">
+        <div class="trust-check"><svg viewBox="0 0 10 10"><polyline points="2,5 4,7 8,3"/></svg></div>
+        No account needed
+      </div>
+      <div class="trust-item">
+        <div class="trust-check"><svg viewBox="0 0 10 10"><polyline points="2,5 4,7 8,3"/></svg></div>
+        End-to-end encrypted
+      </div>
+      <div class="trust-item">
+        <div class="trust-check"><svg viewBox="0 0 10 10"><polyline points="2,5 4,7 8,3"/></svg></div>
+        Free to start
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="doc-demo">
+      <div class="demo-topbar">
+        <span class="dtb-dot dtb-r"></span>
+        <span class="dtb-dot dtb-y"></span>
+        <span class="dtb-dot dtb-g"></span>
+        <span class="demo-file">employment_contract.pdf</span>
+      </div>
+      <div class="demo-cols">
+        <div class="demo-col">
+          <div class="demo-label">Original legalese</div>
+          <div class="legal-text">
+            <mark>Notwithstanding</mark> any provisions contained herein to the contrary, the Employee shall be bound by a <mark>covenant of non-disparagement</mark>, whereby Employee agrees to refrain from making, directly or indirectly, any statement that <mark>impugns or disparages</mark> the Company, its officers, directors, or affiliates, in any medium whatsoever...
+          </div>
+        </div>
+        <div class="demo-col">
+          <div class="demo-label">Plain English</div>
+          <div class="plain-text">
+            <span class="risk-tag"><span class="risk-dot"></span> Restriction</span>
+            <span class="risk-tag-danger"><span class="risk-dot-danger"></span> Ongoing</span>
+            <br>
+            <p style="margin-top:0.5rem;">You cannot say anything negative about the company or its leadership — in public or private — even after you leave. This includes social media, reviews, and interviews.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item"><div class="stat-num">500K+</div><div class="stat-lbl">Documents analyzed</div></div>
+    <div class="stat-item"><div class="stat-num">98%</div><div class="stat-lbl">Accuracy rate</div></div>
+    <div class="stat-item"><div class="stat-num">28s</div><div class="stat-lbl">Average analysis time</div></div>
+    <div class="stat-item"><div class="stat-num">$0</div><div class="stat-lbl">Attorney fee required</div></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="section" id="features">
+  <div class="section-tag">Features</div>
+  <div class="section-h">Everything you need to read with confidence</div>
+  <p class="section-sub">From risk detection to instant Q&A, LegalEase gives you the tools to truly understand what you're signing.</p>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <h3>Plain English summaries</h3>
+      <p>Every clause rewritten clearly. No jargon — just what each section actually means for you, in language anyone can understand.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <h3>Risk flag detection</h3>
+      <p>Unusual clauses, one-sided terms, and hidden obligations are automatically highlighted so you know what to question.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <h3>Ask anything</h3>
+      <p>Chat with your document. "Can they change my salary?" or "What's the notice period?" — answered instantly by AI.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+      <h3>Key terms dashboard</h3>
+      <p>Deadlines, obligations, parties, and payment terms are extracted and displayed in a clean, scannable view.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <h3>Bank-grade privacy</h3>
+      <p>Your documents are encrypted end-to-end. We never store, share, or train on your files. What you upload stays yours.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon"><svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <h3>Instant analysis</h3>
+      <p>A 30-page NDA analyzed in under 30 seconds. Upload PDF, DOCX, or paste text directly — no formatting required.</p>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="how-section" id="how">
+  <div class="how-inner">
+    <div class="section-tag">How it works</div>
+    <div class="section-h">Three steps from confusion to clarity</div>
+    <div class="steps-grid">
+      <div class="step-item">
+        <div class="step-n">01</div>
+        <div class="step-pill">Upload</div>
+        <h3>Drop in your document</h3>
+        <p>Paste text or upload a PDF or Word file. We support contracts, NDAs, leases, privacy policies, terms of service, and more.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-n">02</div>
+        <div class="step-pill">Analyze</div>
+        <h3>AI reads every clause</h3>
+        <p>Our legal-trained AI parses each section, identifying obligations, risks, deadlines, and key terms with expert-level precision.</p>
+      </div>
+      <div class="step-item">
+        <div class="step-n">03</div>
+        <div class="step-pill">Understand</div>
+        <h3>Get your plain summary</h3>
+        <p>Review a side-by-side breakdown. Ask follow-up questions, export your report, or share it with a colleague for review.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DOCUMENT TYPES -->
+<div class="doc-types-section" id="docs">
+  <div class="doc-types-inner">
+    <div class="section-tag">Supported documents</div>
+    <div class="section-h">Works on virtually any legal document</div>
+    <div class="types-grid">
+      <div class="type-chip">Employment contracts</div>
+      <div class="type-chip">Non-disclosure agreements</div>
+      <div class="type-chip">Lease agreements</div>
+      <div class="type-chip">Terms of service</div>
+      <div class="type-chip">Privacy policies</div>
+      <div class="type-chip">Freelance contracts</div>
+      <div class="type-chip">Shareholder agreements</div>
+      <div class="type-chip">Partnership agreements</div>
+      <div class="type-chip">Software licenses</div>
+      <div class="type-chip">Settlement agreements</div>
+      <div class="type-chip">Purchase agreements</div>
+      <div class="type-chip">Service agreements</div>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD SECTION -->
+<div class="upload-section" id="upload">
+  <div class="section-tag" style="text-align:center">Try it now</div>
+  <div class="section-h" style="text-align:center; max-width:100%; margin:0 auto">Upload your document</div>
+  <div class="upload-area" id="uploadArea" onclick="handleUpload(this)" ondragover="onDragOver(event,this)" ondragleave="onDragLeave(this)" ondrop="onDrop(event,this)">
+    <div class="upload-icon-box" id="uploadIconBox">
+      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    </div>
+    <p><strong>Click to upload</strong> or drag and drop your file here</p>
+    <p class="upload-meta">Max 25 MB &nbsp;·&nbsp; Files are encrypted and never stored</p>
+    <div class="upload-formats">
+      <span class="fmt-tag">PDF</span>
+      <span class="fmt-tag">DOCX</span>
+      <span class="fmt-tag">TXT</span>
+      <span class="fmt-tag">Paste text</span>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Stop signing what you don't understand.</h2>
+  <p>Join thousands of people using LegalEase AI to read legal documents with confidence — no lawyer needed.</p>
+  <button class="btn-white">Start analyzing for free</button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">LegalEase AI</div>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Pricing</a>
+    <a href="#">Blog</a>
+    <a href="#">Contact</a>
+  </div>
+  <span class="footer-copy">© 2026 LegalEase AI &nbsp;·&nbsp; Not a law firm</span>
+</footer>
+
+<script>
+  function handleUpload(el) {
+    el.style.borderColor = '#1d9e75';
+    el.style.background = '#e1f5ee';
+    const box = document.getElementById('uploadIconBox');
+    box.style.background = '#c6eede';
+    box.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#0f6e56" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+    el.querySelector('p').innerHTML = '<strong style="color:#0f6e56">Document ready</strong> — connect your backend API to begin analysis';
+    el.querySelector('.upload-meta').textContent = 'Wire up your /api/analyze endpoint to process uploads';
+  }
+
+  function onDragOver(e, el) {
+    e.preventDefault();
+    el.style.borderColor = '#1d9e75';
+    el.style.background = '#e1f5ee';
+  }
+
+  function onDragLeave(el) {
+    el.style.borderColor = 'rgba(17,18,16,0.1)';
+    el.style.background = '#ffffff';
+  }
+
+  function onDrop(e, el) {
+    e.preventDefault();
+    handleUpload(el);
+  }
+</script>
+</body>
+</html>
